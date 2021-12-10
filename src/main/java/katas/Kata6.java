@@ -1,6 +1,7 @@
 package katas;
 
 import model.Movie;
+import model.MovieList;
 import util.DataUtil;
 
 import java.util.List;
@@ -12,8 +13,13 @@ import java.util.List;
 */
 public class Kata6 {
     public static String execute() {
-        List<Movie> movies = DataUtil.getMovies();
+        List<MovieList> movieList = DataUtil.getMovieLists();
 
-        return "someUrl";
+        return movieList.stream()
+                .flatMap(value -> value.getVideos().stream()
+                        .flatMap(video -> video.getBoxarts().stream()))
+                .reduce((acum, actual) -> acum.getWidth() * acum.getHeight() > actual.getWidth() * actual.getHeight() ? acum : actual)
+                .get()
+                .getUrl();
     }
 }

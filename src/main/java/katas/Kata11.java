@@ -3,9 +3,9 @@ package katas;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import util.DataUtil;
-
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
     Goal: Create a datastructure from the given data:
@@ -63,8 +63,18 @@ public class Kata11 {
         List<Map> boxArts = DataUtil.getBoxArts();
         List<Map> bookmarkList = DataUtil.getBookmarkList();
 
-        return ImmutableList.of(ImmutableMap.of("name", "someName", "videos", ImmutableList.of(
-                ImmutableMap.of("id", 5, "title", "The Chamber", "time", 123, "boxart", "someUrl")
-        )));
+        return lists.stream().flatMap(map -> videos.stream()
+                .filter(video -> video.get("listId").equals(map.get("id")))
+                .map(video -> boxArts.stream().filter(boxart -> video.get("id").equals(boxart.get("videoId"))).findFirst()
+                        .map(box -> video.put("boxart", lists.get("url"))))
+                .collect(Collectors.toList()));
+
+//        return (lists.stream().map(list -> ImmutableMap.of("name",list.get("name"),
+//                "videos",videos.stream()
+//                .filter(video -> (video.get("listId").equals(list.get("id"))))
+//                .collect(Collectors.toList()),
+//                "time",bookmarkList.stream().filter(time -> (time.get("time").equals(list.get("id"))))
+//                                .collect(Collectors.toList())))
+//                .collect(Collectors.toList()));
     }
 }
